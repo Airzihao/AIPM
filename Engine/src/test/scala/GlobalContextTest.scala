@@ -32,10 +32,8 @@ class GlobalContextTest {
 
   @Test
   def wrongArgs(): Unit = {
-    val wrongIp = List("10.0.00.9", "499.499.255.255")
+    val wrongIp = List("10.0.256.9", "499.499.255.255")
     val wrongRpcPort = List("0", "9999999", "12")
-//    val item = "499.255.255.255"
-//    GlobalContext.setServerIp(item)
     wrongIp.foreach(item => {
       try {
         GlobalContext.setServerIp(item)

@@ -45,7 +45,8 @@ object GlobalContext extends ContextMap {
   }
 
   def setServerIp(ip: String): Unit = {
-    val ipPattern = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?):[0-9]{1,5}".r
+    val ipPattern = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)".r
+    val ipPatternWithPort = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?):[0-9]{1,5}".r
     val vaildIp = ipPattern findFirstIn(ip)
     if (vaildIp.nonEmpty) {
       put("serverIp", vaildIp.get)
