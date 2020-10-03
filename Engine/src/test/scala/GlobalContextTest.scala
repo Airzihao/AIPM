@@ -32,28 +32,20 @@ class GlobalContextTest {
 
   @Test
   def wrongArgs(): Unit = {
-    val wrongIp = List("10.0.256.9", "499.499.255.255")
-    val wrongRpcPort = List("0", "9999999", "12")
-    wrongIp.foreach(item => {
+    val wIp = List("10.0.256.9", "499.499.255.255")
+    val wRpcPort = List("0", "9999999", "12")
+    val wDockerAPIUrl = List("10.0.0.1", "10.0.0.1:1234","tcp:10.0.0.1:2375")
+
+    wrongArgsListTest(wIp, ipTest)
+    wrongArgsListTest(wRpcPort, portTest)
+    wrongArgsListTest(wDockerAPIUrl, dockerAPIUrlTest)
+  }
+
+
+  def wrongArgsListTest(list: List[String], f: (String) => Unit): Unit = {
+    list.foreach(item => {
       try {
-        GlobalContext.setServerIp(item)
-        Assert.assertTrue(false)
-      } catch {
-        case ex: WrongArgsException => {
-          Assert.assertTrue(true)
-        }
-        case _ => {
-
-          Assert.assertTrue(false)
-          println(item)
-        }
-      }
-    })
-
-
-    wrongRpcPort.foreach(item => {
-      try {
-        GlobalContext.serRpcPort(item)
+        f(item)
         Assert.assertTrue(false)
       } catch {
         case ex: WrongArgsException => {
@@ -66,8 +58,7 @@ class GlobalContextTest {
     })
   }
 
-
-
-
-
+  val ipTest = (ip: String) => GlobalContext.setServerIp(ip)
+  val portTest = (port: String) => GlobalContext.serRpcPort(port)
+  val dockerAPIUrlTest = (url: String) => GlobalContext.serDockerAPIUrl(url)
 }
