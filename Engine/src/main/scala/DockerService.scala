@@ -11,7 +11,7 @@ import com.google.gson.Gson
  */
 class DockerService {
 
-  val dockerClient: DockerClient = DockerClientBuilder.getInstance("tcp://10.0.90.173:2375").build()
+  val dockerClient: DockerClient = DockerClientBuilder.getInstance("").build()
   val info = dockerClient.listContainersCmd().exec()
   val str: String = ""
 }

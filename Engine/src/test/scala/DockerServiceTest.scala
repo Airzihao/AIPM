@@ -16,8 +16,8 @@ class DockerServiceTest {
   def test1(): Unit ={
     val dockerClient: DockerClient = DockerClientBuilder.getInstance("tcp://10.0.90.173:2375").build()
     val info = dockerClient.listContainersCmd().exec()
-    val info1 = dockerClient.pullImageCmd("")
-    val info2 = dockerClient.listImagesCmd()
+//    val info1 = dockerClient.pullImageCmd().exec()
+    val info2 = dockerClient.listImagesCmd().exec()
     val info3:Info = dockerClient.infoCmd().exec()
 /*
      1. check the system info
