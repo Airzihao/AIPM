@@ -6,24 +6,24 @@
         <artifactId>AIPM</artifactId>
         <groupId>org.grapheco</groupId>
         <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>CommonUtils</artifactId>
+    <artifactId>AIPM-OP</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
+            <groupId>org.grapheco</groupId>
+            <artifactId>CommonUtils</artifactId>
+            <version>${aipm.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <groupId>net.neoremind</groupId>
+            <artifactId>kraps-rpc_2.11</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
+
 
 
 </project>

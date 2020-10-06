@@ -1,3 +1,5 @@
+package org.grapheco.aipm.common.utils
+
 /**
  * @Author: Airzihao
  * @Description:
@@ -9,5 +11,9 @@ class AIPMException(msg: String) extends Exception(msg) {
 }
 
 class WrongArgsException(msg: String) extends Exception(msg) {
+
+}
+
+class RpcConnectionError(msg: String) extends Exception(msg) {
 
 }
