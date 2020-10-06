@@ -17,3 +17,7 @@ class WrongArgsException(msg: String) extends Exception(msg) {
 class RpcConnectionError(msg: String) extends Exception(msg) {
 
 }
+
+class CmdExecError(msg: String) extends Exception(msg) {
+
+}

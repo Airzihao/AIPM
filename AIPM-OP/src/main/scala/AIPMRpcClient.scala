@@ -34,5 +34,4 @@ case class AIPMRpcClient(val serverAddress: NodeAddress) extends Logging {
     rpcEnv.stop(endPointRef)
   }
 
-  def
 }

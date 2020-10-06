@@ -6,12 +6,24 @@ import org.grapheco.aipm.common.utils.{InternalRpcRequest, InternalRpcResponse}
  * @Date: Created at 18:00 2020/10/6
  * @Modified By:
  */
+
 case class RpcRequestHandler() extends RequestHandler {
   override val logic: PartialFunction[InternalRpcRequest, InternalRpcResponse] = {
-    _
+    case GetUrlFaceFeaturesRequest(url: String) =>
+      GetFaceFeaturesResponse(result = "")
   }
 }
 
-case class GetFaceFeatures() extends InternalRpcRequest {
+case class GetUrlFaceFeaturesRequest(url: String) extends InternalRpcRequest {
 
 }
+
+// TODO: how to design the stream func?
+//case class GetStreamFaceFeaturesRequest(stream: ) extends InternalRpcRequest {
+//
+//}
+
+case class GetFaceFeaturesResponse(result: String) extends InternalRpcResponse {
+
+}
+
