@@ -1,6 +1,7 @@
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
+import org.grapheco.aipm.common.utils.WrongArgsException
 import org.junit.{Assert, Test}
 
 import scala.collection.JavaConversions
@@ -59,6 +60,6 @@ class GlobalContextTest {
   }
 
   val ipTest = (ip: String) => GlobalContext.setServerIp(ip)
-  val portTest = (port: String) => GlobalContext.serRpcPort(port)
-  val dockerAPIUrlTest = (url: String) => GlobalContext.serDockerAPIUrl(url)
+  val portTest = (port: String) => GlobalContext.setRpcPort(port)
+  val dockerAPIUrlTest = (url: String) => GlobalContext.setDockerAPIUrl(url)
 }

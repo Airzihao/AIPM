@@ -1,3 +1,5 @@
+import org.grapheco.aipm.common.utils.{ArgsFormatChecker, WrongArgsException}
+
 import scala.collection.Set
 import scala.collection.mutable.{Map => MMap}
 
@@ -43,34 +45,49 @@ object GlobalContext extends ContextMap {
   def getContainerId(): String = {
     get[String]("containerId")
   }
-
   def setServerIp(ip: String): Unit = {
-    val ipPattern = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)".r
-    val vaildIp = ipPattern findFirstIn(ip)
-    if (vaildIp.nonEmpty) {
-      put("serverIp", vaildIp.get)
+    if(ArgsFormatChecker.isValid(ip, "serverIp")){
+      put("serverIp", ip)
     } else {
       throw new WrongArgsException(s"Wrong server ip value for $ip")
     }
   }
+
+//  def setServerIp(ip: String): Unit = {
+//    val ipPattern = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)".r
+//    val vaildIp = ipPattern findFirstIn(ip)
+//    if (vaildIp.nonEmpty) {
+//      put("serverIp", vaildIp.get)
+//    } else {
+//      throw new WrongArgsException(s"Wrong server ip value for $ip")
+//    }
+//  }
   def getServerIp(): String = {
     get[String]("serverIp")
   }
 
-  def serRpcPort(port: String): Unit = {
-    val portPattern = "^\\d{3,5}$".r
-    val vaildPort = portPattern findFirstIn(port)
-    if(vaildPort.nonEmpty) {
-      put("aipmRpcPort", vaildPort.get)
+  def setRpcPort(port: String): Unit = {
+    if(ArgsFormatChecker.isValid(port, "aipmRpcPort")) {
+      put("aipmRpcPort", port)
     } else {
       throw new WrongArgsException(s"Wrong aipmRpcPort value for $port")
     }
   }
+
+//  def setRpcPort(port: String): Unit = {
+//    val portPattern = "^\\d{3,5}$".r
+//    val vaildPort = portPattern findFirstIn(port)
+//    if(vaildPort.nonEmpty) {
+//      put("aipmRpcPort", vaildPort.get)
+//    } else {
+//      throw new WrongArgsException(s"Wrong aipmRpcPort value for $port")
+//    }
+//  }
   def getRpcPort(): String = {
     get[String]("aipmRpcPort")
   }
 
-  def serDockerAPIUrl(url: String): Unit = {
+  def setDockerAPIUrl(url: String): Unit = {
     val dockerAPIUrlPattern = "tcp://((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?):[0-9]{1,5}".r
     val vaildUrl = dockerAPIUrlPattern findFirstIn(url)
     if (vaildUrl.nonEmpty) {
