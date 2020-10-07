@@ -16,7 +16,7 @@ object ArgsFormatChecker {
     formatName match {
       case "serverIp" => ipPattern.pattern.matcher(arg.toString).matches()
       case "aipmRpcPort" =>  aipmRpcPort.pattern.matcher(arg.toString).matches()
-      case "dockerAPIUrlPattern" =>  dockerAPIUrlPattern.pattern.matcher(arg.toString).matches()
+      case "dockerAPIUrl" =>  dockerAPIUrlPattern.pattern.matcher(arg.toString).matches()
       case _ => false
     }
   }

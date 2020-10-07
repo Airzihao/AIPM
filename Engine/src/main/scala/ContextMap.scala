@@ -31,10 +31,6 @@ class ContextMap {
     }
   }
 
-//  def init(propMap: Map[String, Any]): Unit ={
-//    propMap.map(pair => put(pair._1, pair._2))
-//  }
-
 }
 
 object GlobalContext extends ContextMap {
@@ -53,15 +49,6 @@ object GlobalContext extends ContextMap {
     }
   }
 
-//  def setServerIp(ip: String): Unit = {
-//    val ipPattern = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)".r
-//    val vaildIp = ipPattern findFirstIn(ip)
-//    if (vaildIp.nonEmpty) {
-//      put("serverIp", vaildIp.get)
-//    } else {
-//      throw new WrongArgsException(s"Wrong server ip value for $ip")
-//    }
-//  }
   def getServerIp(): String = {
     get[String]("serverIp")
   }
@@ -74,28 +61,18 @@ object GlobalContext extends ContextMap {
     }
   }
 
-//  def setRpcPort(port: String): Unit = {
-//    val portPattern = "^\\d{3,5}$".r
-//    val vaildPort = portPattern findFirstIn(port)
-//    if(vaildPort.nonEmpty) {
-//      put("aipmRpcPort", vaildPort.get)
-//    } else {
-//      throw new WrongArgsException(s"Wrong aipmRpcPort value for $port")
-//    }
-//  }
   def getRpcPort(): String = {
     get[String]("aipmRpcPort")
   }
 
   def setDockerAPIUrl(url: String): Unit = {
-    val dockerAPIUrlPattern = "tcp://((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?):[0-9]{1,5}".r
-    val vaildUrl = dockerAPIUrlPattern findFirstIn(url)
-    if (vaildUrl.nonEmpty) {
-      put("dockerAPIUrl", vaildUrl.get)
+    if(ArgsFormatChecker.isValid(url, "dockerAPIUrl")) {
+      put("dockerAPIUrl", url)
     } else {
       throw new WrongArgsException(s"Wrong dockerAPIUrl for $url")
     }
   }
+
   def getDockerAPIUrl(): String = {
     get[String]("dockerAPIUrl")
   }

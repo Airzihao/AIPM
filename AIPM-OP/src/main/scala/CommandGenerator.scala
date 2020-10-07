@@ -9,7 +9,8 @@ object CommandGenerator {
 
 }
 
-case class PyBashExecCommand(env: String, bashFile: String, args: Array[String]) extends Command {
+// todo: test basicly run cmd line!
+case class BashExecCommand(env: String, bashFile: String, val args: Array[String] =  Array("")) extends Command {
   // the expected evn value is python or python3
   override def getAsString(): String = {
     val argsAsString: String = {

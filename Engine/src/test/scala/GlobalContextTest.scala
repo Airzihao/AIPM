@@ -15,9 +15,6 @@ import scala.collection.immutable.HashMap
  */
 class GlobalContextTest {
 
-
-
-  // contextMap Test
   @Test
   def argsFromFile(): Unit ={
     val overrided: Map[String, String] = HashMap[String, String]()
