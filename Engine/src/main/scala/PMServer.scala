@@ -2,7 +2,7 @@ import java.io.{File, FileInputStream}
 import java.util.Properties
 
 import org.apache.commons.io.IOUtils
-import org.grapheco.aipm.common.utils.Logging
+import org.grapheco.aipm.common.utils.GlobalContext
 
 import scala.collection.JavaConversions
 
@@ -37,6 +37,7 @@ class PMServer(confMap: Map[String, Any]) {
         case "serverIp" => GlobalContext.setServerIp(pair._2.toString)
         case "aipmRpcPort" => GlobalContext.setRpcPort(pair._2.toString)
         case "dockerAPIUrl" => GlobalContext.setDockerAPIUrl(pair._2.toString)
+        case "aipmRpcServerIp" => GlobalContext.setAIPMRpcServerIp(pair._2.toString)
         case _ => println(s"Not uesd: $pair")
       }
     })

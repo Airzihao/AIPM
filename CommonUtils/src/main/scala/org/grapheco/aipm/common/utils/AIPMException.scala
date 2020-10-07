@@ -18,6 +18,6 @@ class RpcConnectionError(msg: String) extends Exception(msg) {
 
 }
 
-class CmdExecError(msg: String) extends Exception(msg) {
+class AIPMRpcError(msg: String) extends Exception(msg) {
 
 }

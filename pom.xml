@@ -10,12 +10,12 @@
     <modules>
         <module>Engine</module>
         <module>CommonUtils</module>
-        <module>AIPM-OP</module>
+        <module>Network</module>
     </modules>
     <packaging>pom</packaging>
 
     <properties>
-        <scala.version>2.11.12</scala.version>
+        <scala.version>2.11.8</scala.version>
         <junit.version>4.10</junit.version>
         <aipm.version>0.1.0-SNAPSHOT</aipm.version>
     </properties>

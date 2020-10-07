@@ -1,7 +1,7 @@
-import org.grapheco.aipm.common.utils.{ArgsFormatChecker, WrongArgsException}
+package org.grapheco.aipm.common.utils
 
 import scala.collection.Set
-import scala.collection.mutable.{Map => MMap}
+import scala.collection.mutable.{ArrayBuffer, Map => MMap}
 
 /**
  * @Author: Airzihao
@@ -75,5 +75,23 @@ object GlobalContext extends ContextMap {
 
   def getDockerAPIUrl(): String = {
     get[String]("dockerAPIUrl")
+  }
+
+  def setAIPMRpcServerIp(ipStr: String): Unit = {
+    val ipAddrBuffer: ArrayBuffer[String] = ArrayBuffer[String]()
+    ipStr.split(",").foreach(item => {
+      if(ArgsFormatChecker.isValid(item, "aipmRpcServerIp")) {
+        ipAddrBuffer.append(item)
+      }
+    })
+    val ipAddrArr: Array[String] = ipAddrBuffer.toArray
+    if(ipAddrArr.length == 0) {
+      throw new WrongArgsException(s"Wrong aipmRpcServerIp value for $ipStr")
+    }
+  }
+
+  // todo: modify the get func, to keep load balancing
+  def getAIPMRpcServerIp(): String = {
+    get[Array[String]]("aipmRpcServerIp")(0)
   }
 }
