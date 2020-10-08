@@ -2,19 +2,19 @@ syntax = "proto3";
 package org.grapheco.aipm.rpc;
 
 service FaceFeatureApi {
-  rpc getFaceFeature(UrlFaceFeatureRequest) returns (FaceFeatureResponse) {}
-
+//  support stream service?
+  rpc getUrlFaceFeature(UrlFaceFeatureRequest) returns (FaceFeatureResponse) {}
+  rpc getBytesFaceFeature(BytesFaceFeatureRequest) returns (FaceFeatureResponse) {}
 }
 
 message UrlFaceFeatureRequest {
   string imgUrl = 1;
 }
 
-// how to
-message StreamFaceFeatureRequest {
-
+message BytesFaceFeatureRequest {
+  bytes imgBytes = 1;
 }
 
 message FaceFeatureResponse {
-  string jsonResultStr = 1;
+  bytes jsonResultBytes = 1;
 }

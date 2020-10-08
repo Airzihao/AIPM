@@ -39,7 +39,6 @@ class GlobalContextTest {
     wrongArgsListTest(wRpcPort, portTest)
     wrongArgsListTest(wDockerAPIUrl, dockerAPIUrlTest)
     wrongArgsListTest(wAIPMRpcServerIP, aipmRpcServerIpTest)
-
   }
 
 

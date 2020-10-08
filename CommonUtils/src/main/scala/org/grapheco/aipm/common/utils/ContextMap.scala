@@ -26,7 +26,7 @@ class ContextMap {
       _map(key).asInstanceOf[T]
     } catch {
       case ex: Exception => {
-        throw new WrongArgsException(s"Not found $key in GlobalContext.")
+        throw new WrongArgsException(s"Not found $key in GlobalContext. \n ${ex.getMessage}")
       }
     }
   }
