@@ -2,6 +2,8 @@ package org.grapheco.aipm.common.utils
 
 import java.io.{File, FileInputStream}
 
+import org.neo4j.blob.Blob
+
 /**
  * @Author: Airzihao
  * @Description:
@@ -15,6 +17,10 @@ object AipmFileOp {
     in.read(bytes)
     in.close()
     bytes
+  }
+
+  def getBlobAsBytesArr(blob: Blob): Array[Byte] = {
+    blob.toBytes()
   }
 
 }

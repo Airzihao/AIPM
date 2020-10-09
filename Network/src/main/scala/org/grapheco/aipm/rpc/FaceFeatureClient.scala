@@ -3,6 +3,7 @@ package org.grapheco.aipm.rpc
 import com.google.protobuf.ByteString
 import io.grpc.ManagedChannel
 import org.grapheco.aipm.common.utils.{AipmRpcError, GlobalContext, Logging, WrongArgsException}
+import org.neo4j.blob.Blob
 
 import scala.collection.immutable.Map
 import scala.util.parsing.json.JSON
@@ -17,7 +18,6 @@ import scala.util.parsing.json.JSON
 class FaceFeatureClient(val rpcServerIp: String = GlobalContext.getAipmRpcServerIp()) extends AipmRpcClient {
 
   protected val _channel: ManagedChannel = io.grpc.ManagedChannelBuilder.forTarget(rpcServerIp).usePlaintext().build();
-
   val stub = _getBlockingStub()
 
   def getFaceFeatures(arg: Any): List[List[Double]] = {
@@ -26,13 +26,19 @@ class FaceFeatureClient(val rpcServerIp: String = GlobalContext.getAipmRpcServer
         arg match {
           case arg: String => {
             val urlRequest: FaceFeatureService.UrlFaceFeatureRequest =
-              FaceFeatureService.UrlFaceFeatureRequest.newBuilder().setImgUrl(arg.asInstanceOf[String]).build()
+              FaceFeatureService.UrlFaceFeatureRequest.newBuilder().setImgUrl(arg).build()
             val urlResponse: FaceFeatureService.FaceFeatureResponse = stub.getUrlFaceFeature(urlRequest)
             urlResponse
           }
           case arg: ByteString => {
             val bytesRequest: FaceFeatureService.BytesFaceFeatureRequest =
-              FaceFeatureService.BytesFaceFeatureRequest.newBuilder().setImgBytes(arg.asInstanceOf[ByteString]).build()
+              FaceFeatureService.BytesFaceFeatureRequest.newBuilder().setImgBytes(arg).build()
+            val bytesResponse: FaceFeatureService.FaceFeatureResponse = stub.getBytesFaceFeature(bytesRequest)
+            bytesResponse
+          }
+          case arg: Blob => {
+            val bytesRequest: FaceFeatureService.BytesFaceFeatureRequest =
+              FaceFeatureService.BytesFaceFeatureRequest.newBuilder().setImgBytes(ByteString.copyFrom(arg.toBytes())).build()
             val bytesResponse: FaceFeatureService.FaceFeatureResponse = stub.getBytesFaceFeature(bytesRequest)
             bytesResponse
           }

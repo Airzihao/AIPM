@@ -16,20 +16,12 @@
 
     <properties>
         <scala.version>2.11.8</scala.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.12</junit.version>
         <aipm.version>0.1.0-SNAPSHOT</aipm.version>
     </properties>
 
-
-
-
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>net.neoremind</groupId>
-                <artifactId>kraps-rpc_2.11</artifactId>
-                <version>1.0.0</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java -->
             <dependency>
                 <groupId>com.github.docker-java</groupId>
@@ -72,6 +64,24 @@
 
         </dependencies>
     </dependencyManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sdc</id>
+            <url>http://10.0.82.220:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sdc</id>
+            <url>http://10.0.82.220:8081/repository/maven-releases</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>sdc</id>
+            <name>Repository</name>
+            <url>http://10.0.82.220:8081/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>

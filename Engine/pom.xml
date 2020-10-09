@@ -25,6 +25,12 @@
         <dependency>
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java</artifactId>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId></groupId>-->
+<!--                    <artifactId></artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -35,6 +41,5 @@
             <artifactId>slf4j-nop</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>
