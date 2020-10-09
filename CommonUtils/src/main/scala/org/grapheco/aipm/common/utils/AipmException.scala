@@ -6,7 +6,7 @@ package org.grapheco.aipm.common.utils
  * @Date: Created at 17:45 2020/10/1
  * @Modified By:
  */
-class AIPMException(msg: String) extends Exception(msg) {
+class AipmException(msg: String) extends Exception(msg) {
 
 }
 
@@ -18,6 +18,6 @@ class RpcConnectionError(msg: String) extends Exception(msg) {
 
 }
 
-class AIPMRpcError(msg: String) extends Exception(msg) {
+class AipmRpcError(msg: String) extends Exception(msg) {
 
 }

@@ -33,12 +33,12 @@ class GlobalContextTest {
     val wIp = List("10.0.256.9", "499.499.255.255")
     val wRpcPort = List("0", "9999999", "12")
     val wDockerAPIUrl = List("10.0.0.1", "10.0.0.1:1234","tcp:10.0.0.1:2375")
-    val wAIPMRpcServerIP = List("10.0.88.88", "10.0.99.99:", "10.0.88.88,10.0.99.99")
+    val wAipmRpcServerIP = List("10.0.88.88", "10.0.99.99:", "10.0.88.88,10.0.99.99")
 
     wrongArgsListTest(wIp, ipTest)
     wrongArgsListTest(wRpcPort, portTest)
     wrongArgsListTest(wDockerAPIUrl, dockerAPIUrlTest)
-    wrongArgsListTest(wAIPMRpcServerIP, aipmRpcServerIpTest)
+    wrongArgsListTest(wAipmRpcServerIP, aipmRpcServerIpTest)
   }
 
 
@@ -61,5 +61,5 @@ class GlobalContextTest {
   val ipTest = (ip: String) => GlobalContext.setServerIp(ip)
   val portTest = (port: String) => GlobalContext.setRpcPort(port)
   val dockerAPIUrlTest = (url: String) => GlobalContext.setDockerAPIUrl(url)
-  val aipmRpcServerIpTest = (ipStr: String) => GlobalContext.setAIPMRpcServerIp(ipStr)
+  val aipmRpcServerIpTest = (ipStr: String) => GlobalContext.setAipmRpcServerIp(ipStr)
 }

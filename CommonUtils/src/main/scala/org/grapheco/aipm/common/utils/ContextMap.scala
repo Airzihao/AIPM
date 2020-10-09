@@ -77,7 +77,7 @@ object GlobalContext extends ContextMap {
     get[String]("dockerAPIUrl")
   }
 
-  def setAIPMRpcServerIp(ipStr: String): Unit = {
+  def setAipmRpcServerIp(ipStr: String): Unit = {
     val ipAddrBuffer: ArrayBuffer[String] = ArrayBuffer[String]()
     ipStr.split(",").foreach(item => {
       if(ArgsFormatChecker.isValid(item, "aipmRpcServerIp")) {
@@ -91,7 +91,7 @@ object GlobalContext extends ContextMap {
   }
 
   // todo: modify the get func, to keep load balancing
-  def getAIPMRpcServerIp(): String = {
+  def getAipmRpcServerIp(): String = {
     get[Array[String]]("aipmRpcServerIp")(0)
   }
 }

@@ -1,7 +1,8 @@
 package org.grapheco.aipm.rpc
 
 import com.google.protobuf.ByteString
-import org.grapheco.aipm.common.utils.{AIPMRpcError, WrongArgsException}
+import io.grpc.ManagedChannel
+import org.grapheco.aipm.common.utils.{AipmRpcError, GlobalContext, Logging, WrongArgsException}
 
 import scala.collection.immutable.Map
 import scala.util.parsing.json.JSON
@@ -12,7 +13,12 @@ import scala.util.parsing.json.JSON
  * @Date: Created at 22:10 2020/10/8
  * @Modified By:
  */
-class FaceFeatureClient extends AIPMRpcClient with AIPMRpcService {
+
+class FaceFeatureClient(val rpcServerIp: String = GlobalContext.getAipmRpcServerIp()) extends AipmRpcClient {
+
+  protected val _channel: ManagedChannel = io.grpc.ManagedChannelBuilder.forTarget(rpcServerIp).usePlaintext().build();
+
+  val stub = _getBlockingStub()
 
   def getFaceFeatures(arg: Any): List[List[Double]] = {
     try {
@@ -39,7 +45,7 @@ class FaceFeatureClient extends AIPMRpcClient with AIPMRpcService {
     } catch {
       case ex: Exception => {
         logger.error(ex.getMessage)
-        throw new AIPMRpcError(ex.getMessage)
+        throw new AipmRpcError(ex.getMessage)
       }
     }
   }
@@ -49,17 +55,16 @@ class FaceFeatureClient extends AIPMRpcClient with AIPMRpcService {
     val map: Map[String, Any] = json.get.asInstanceOf[Map[String, Any]]
     if (map("res").asInstanceOf[Boolean]) {
       if(map("value").asInstanceOf[List[List[Double]]].length == 0){
-        //        throw new Exception("no face detected.")
         val arr = new Array[Double](128)
         List(arr.toList)
-
       } else {
         map("value").asInstanceOf[List[List[Double]]]
       }
     }
-    else {
-      null
-    }
+    else null
+  }
 
+  private def _getBlockingStub(): FaceFeatureApiGrpc.FaceFeatureApiBlockingStub = {
+    FaceFeatureApiGrpc.newBlockingStub(_channel)
   }
 }

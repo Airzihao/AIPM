@@ -1,14 +1,19 @@
-import java.util
+
+
+import java.io.File
 
 import com.google.gson.reflect.TypeToken
-import org.grapheco.aipm.rpc.{AIPMRpcClient, FaceFeatureClient}
+import org.grapheco.aipm.rpc.{AipmRpcClient, FaceFeatureClient}
 import org.junit.{Assert, Test}
 import com.google.gson.{Gson, JsonArray, JsonObject, JsonParser}
-import org.grapheco.aipm.common.utils.WrongArgsException
+import com.google.protobuf.{ByteString, CodedInputStream}
+import org.grapheco.aipm.common.utils.AipmFileOp
 
 import scala.collection.JavaConversions.{asScalaBuffer, collectionAsScalaIterable, iterableAsScalaIterable}
 import scala.io.Source
 import scala.collection.JavaConverters._
+import scala.collection.immutable.Map
+import scala.util.parsing.json.JSON
 
 /**
  * @Author: Airzihao
@@ -18,56 +23,41 @@ import scala.collection.JavaConverters._
  */
 class FaceFeatureClientTest {
   val rpcServerIp: String = "127.0.0.1:8081"
-  val client = new AIPMRpcClient(rpcServerIp)
-  val client2 = new FaceFeatureClient(rpcServerIp)
+  val client = new FaceFeatureClient(rpcServerIp)
+  val imgFilePath1:String = "D:/PySpace/AIPM-OPCollection/data/face/temp1.jpg"
+  val imgFilePath2:String = "D:/PySpace/AIPM-OPCollection/data/face/temp2.jpg"
 
   @Test
   def test1(): Unit = {
     // get features from url
-
-    val result: List[List[Double]] = client.getFaceFeatures("D:/PySpace/AIPM-OPCollection/data/face/temp1.jpg")
-    val json = new JsonParser
-    val expectedResultStr = json.parse(Source.fromFile("./src/test/resources/result1.txt", "utf-8").bufferedReader()).getAsString
-    val expectedResult: List[List[Double]] = _wrapResult[List[List[Double]]](expectedResultStr, "value")
-//    Assert.assertEquals(true, isJsonObjectEquals(result1, expectedResult1))
-//    Assert.assertEquals(true, isJsonObjectEquals(result2, expectedResult2))
-    val jsonStr = Source.fromFile("./src/test/resources/result1.txt", "utf-8").mkString
-//    val jsonStr = expectedResult1.getAsString
-    val jsonArray = new JsonParser().parse(jsonStr).getAsJsonObject.getAsJsonArray("value").size()
-
+    val result: List[List[Double]] = client.getFaceFeatures(imgFilePath1)
+    val expectedResultStr = Source.fromFile("./src/test/resources/result1.txt", "utf-8").mkString
+    val expectedResult: List[List[Double]] = _wrapResult(expectedResultStr)
     Assert.assertEquals(expectedResult, result)
   }
 
   @Test
   def test2(): Unit = {
     // get features from bytes
-    val json = new JsonParser
-    val expectedResult2 = json.parse(Source.fromFile("./src/test/resources/result2.txt", "utf-8").bufferedReader()).getAsJsonObject
+    val imgBytes: ByteString = ByteString.copyFrom(AipmFileOp.getBinFileAsBytesArr(new File(imgFilePath2)))
+    val result: List[List[Double]] = client.getFaceFeatures(imgBytes)
+    val expectedResultStr = Source.fromFile("./src/test/resources/result2.txt", "utf-8").mkString
+    val expectedResult2 = _wrapResult(expectedResultStr)
+    Assert.assertEquals(expectedResult2, result)
   }
 
-
-
-  private def isJsonObjectEquals(jsonObj1: JsonObject, jsonObj2: JsonObject): Boolean = {
-    var flag = true
-    if (jsonObj1.keySet().toArray().length != jsonObj2.keySet().toArray().length) return false
-    jsonObj1.keySet().toArray.foreach(key => {
-      if(jsonObj1.get(key.toString) != jsonObj2.get(key.toString)) {
-        flag = false
+  private def _wrapResult(jsonStr: String): List[List[Double]] = {
+    val json: Option[Any] = JSON.parseFull(jsonStr)
+    val map: Map[String, Any] = json.get.asInstanceOf[Map[String, Any]]
+    if (map("res").asInstanceOf[Boolean]) {
+      if(map("value").asInstanceOf[List[List[Double]]].length == 0){
+        val arr = new Array[Double](128)
+        List(arr.toList)
+      } else {
+        map("value").asInstanceOf[List[List[Double]]]
       }
-    })
-    flag
-  }
-
-  private def _wrapResult[T](jsonStr: String, fieldName: String): T = {
-    val jsonObj: JsonObject = new JsonParser().parse(jsonStr).asInstanceOf[JsonObject]
-    if (!jsonObj.has(fieldName)) {
-      throw new WrongArgsException(s"No $fieldName in the result.")
     }
-    val _jsonElement = jsonObj.get(fieldName)
-    val result: T = _jsonElement match {
-      case _j: JsonArray => new Gson().fromJson(_jsonElement, new TypeToken[T](){}.getType)
-    }
-    result.asInstanceOf[T]
+    else null
   }
 
 

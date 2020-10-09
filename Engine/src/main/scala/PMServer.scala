@@ -37,7 +37,7 @@ class PMServer(confMap: Map[String, Any]) {
         case "serverIp" => GlobalContext.setServerIp(pair._2.toString)
         case "aipmRpcPort" => GlobalContext.setRpcPort(pair._2.toString)
         case "dockerAPIUrl" => GlobalContext.setDockerAPIUrl(pair._2.toString)
-        case "aipmRpcServerIp" => GlobalContext.setAIPMRpcServerIp(pair._2.toString)
+        case "aipmRpcServerIp" => GlobalContext.setAipmRpcServerIp(pair._2.toString)
         case _ => println(s"Not uesd: $pair")
       }
     })
