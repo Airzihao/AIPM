@@ -2,10 +2,12 @@ package org.grapheco.aipm.rpc
 
 import com.google.protobuf.ByteString
 import io.grpc.ManagedChannel
-import org.grapheco.aipm.common.utils.{AipmRpcError, GlobalContext, Logging, WrongArgsException}
+import org.grapheco.aipm.common.utils.{AipmRpcError, GlobalContext, WrongArgsException}
 import org.neo4j.blob.Blob
 
 import scala.collection.immutable.Map
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.parsing.json.JSON
 
 /**
@@ -54,6 +56,43 @@ class FaceFeatureClient(val rpcServerIp: String = GlobalContext.getAipmRpcServer
         throw new AipmRpcError(ex.getMessage)
       }
     }
+  }
+
+  def asyncGetFaceFeatures(arg: Any): Future[List[List[Double]]] = Future{
+    try {
+      val response: FaceFeatureService.FaceFeatureResponse = {
+        arg match {
+          case arg: String => {
+            val urlRequest: FaceFeatureService.UrlFaceFeatureRequest =
+              FaceFeatureService.UrlFaceFeatureRequest.newBuilder().setImgUrl(arg).build()
+            val urlResponse: FaceFeatureService.FaceFeatureResponse = stub.getUrlFaceFeature(urlRequest)
+            urlResponse
+          }
+          case arg: ByteString => {
+            val bytesRequest: FaceFeatureService.BytesFaceFeatureRequest =
+              FaceFeatureService.BytesFaceFeatureRequest.newBuilder().setImgBytes(arg).build()
+            val bytesResponse: FaceFeatureService.FaceFeatureResponse = stub.getBytesFaceFeature(bytesRequest)
+            bytesResponse
+          }
+          case arg: Blob => {
+            val bytesRequest: FaceFeatureService.BytesFaceFeatureRequest =
+              FaceFeatureService.BytesFaceFeatureRequest.newBuilder().setImgBytes(ByteString.copyFrom(arg.toBytes())).build()
+            val bytesResponse: FaceFeatureService.FaceFeatureResponse = stub.getBytesFaceFeature(bytesRequest)
+            bytesResponse
+          }
+          case _ => {
+            throw new WrongArgsException(s"Wrong arg type for $arg in getFaceFeatures.")
+          }
+        }
+      }
+      _wrapResult(response.getJsonResultBytes.toStringUtf8)
+    } catch {
+      case ex: Exception => {
+        logger.error(ex.getMessage)
+        throw new AipmRpcError(ex.getMessage)
+      }
+    }
+
   }
 
   private def _wrapResult(jsonStr: String): List[List[Double]] = {

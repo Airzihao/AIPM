@@ -1,21 +1,20 @@
-
-
 import java.io.File
 
-import com.google.gson.reflect.TypeToken
-import org.grapheco.aipm.rpc.{AipmRpcClient, FaceFeatureClient}
-import org.junit.{Assert, FixMethodOrder, Test, runners}
-import com.google.gson.{Gson, JsonArray, JsonObject, JsonParser}
-import com.google.protobuf.{ByteString, CodedInputStream}
+import com.google.protobuf.ByteString
 import org.grapheco.aipm.common.utils.AipmFileOp
+import org.grapheco.aipm.rpc.FaceFeatureClient
 import org.junit.runners.MethodSorters
+import org.junit.{Assert, FixMethodOrder, Test}
 import org.neo4j.blob.Blob
 import org.neo4j.blob.impl.BlobFactory
 
-import scala.collection.JavaConversions.{asScalaBuffer, collectionAsScalaIterable, iterableAsScalaIterable}
-import scala.io.Source
-import scala.collection.JavaConverters._
 import scala.collection.immutable.Map
+import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.io.Source
+import scala.util.Success
 import scala.util.parsing.json.JSON
 
 /**
@@ -60,7 +59,6 @@ class FaceFeatureClientTest {
     val expectedResultStr = Source.fromFile("./src/test/resources/result3.txt", "utf-8").mkString
     val expectedResult3 = _wrapResult(expectedResultStr)
     Assert.assertEquals(expectedResult3, result)
-
   }
 
   private def _wrapResult(jsonStr: String): List[List[Double]] = {
@@ -77,5 +75,51 @@ class FaceFeatureClientTest {
     else null
   }
 
+
+  @Test
+  def serialServer(): Unit = {
+    val serialServerClient = new FaceFeatureClient("127.0.0.1:8081")
+    val time0 = System.currentTimeMillis()
+    syncClientTest(serialServerClient)
+    val time1 = System.currentTimeMillis()
+    asyncClientTest(serialServerClient)
+    val time2 = System.currentTimeMillis()
+    println(s"On serial server, syncClient costs ${time1-time0}")
+    println(s"On serial server, asyncClient costs ${time2-time1}")
+  }
+  @Test
+  def parallenServer(): Unit = {
+    val parallelServerClient = new FaceFeatureClient("127.0.0.1:8082")
+    val time0 = System.currentTimeMillis()
+    syncClientTest(parallelServerClient)
+    val time1 = System.currentTimeMillis()
+    asyncClientTest(parallelServerClient)
+    val time2 = System.currentTimeMillis()
+    println(s"On parallel server, syncClient cost ${time1-time0}")
+    println(s"On parallel server, asyncClient cost ${time2-time1}")
+  }
+
+
+
+  def syncClientTest(_client: FaceFeatureClient): Unit = {
+    val blob: Blob = BlobFactory.fromFile(new File(imgFilePath3))
+    for (i<-1 to 10) {
+      _client.getFaceFeatures(blob)
+    }
+  }
+
+  def asyncClientTest(_client: FaceFeatureClient): Unit ={
+    val blob: Blob = BlobFactory.fromFile(new File(imgFilePath3))
+    val futureResultBuf: ArrayBuffer[Future[List[List[Double]]]] = ArrayBuffer[Future[List[List[Double]]]]()
+    var i = 0
+    for (i<-1 to 10) {
+      futureResultBuf.append(_client.asyncGetFaceFeatures(blob))
+    }
+    val futureResultList = futureResultBuf.toArray
+    futureResultList.foreach(f => f.onComplete {
+      case Success(result) => "do nothing"
+    })
+    futureResultList.foreach(f => Await.result(f, Duration.Inf))
+  }
 
 }
