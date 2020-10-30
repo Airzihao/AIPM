@@ -1,4 +1,4 @@
-import java.io.File
+import java.io.{File, FileWriter}
 
 import com.google.protobuf.ByteString
 import org.grapheco.aipm.common.utils.AipmFileOp
@@ -75,44 +75,61 @@ class FaceFeatureClientTest {
     else null
   }
 
-
-  @Test
-  def serialServer(): Unit = {
+  def serialServer(repeatTime: Int, fileWriter: FileWriter): Unit = {
     val serialServerClient = new FaceFeatureClient("127.0.0.1:8081")
     val time0 = System.currentTimeMillis()
-    syncClientTest(serialServerClient)
+    syncClientTest(serialServerClient, repeatTime)
     val time1 = System.currentTimeMillis()
-    asyncClientTest(serialServerClient)
+    asyncClientTest(serialServerClient, repeatTime)
     val time2 = System.currentTimeMillis()
-    println(s"On serial server, syncClient costs ${time1-time0}")
-    println(s"On serial server, asyncClient costs ${time2-time1}")
+    println(s"On serial server, syncClient $repeatTime costs ${time1-time0}")
+    println(s"On serial server, asyncClient $repeatTime costs ${time2-time1}")
+    fileWriter.write(s"On serial server, syncClient $repeatTime costs ${time1-time0}\n")
+    fileWriter.write(s"On serial server, asyncClient $repeatTime costs ${time2-time1}\n")
+    fileWriter.flush()
   }
-  @Test
-  def parallenServer(): Unit = {
+
+
+  def parallelServer(repeatTime: Int, fileWriter: FileWriter): Unit = {
     val parallelServerClient = new FaceFeatureClient("127.0.0.1:8082")
     val time0 = System.currentTimeMillis()
-    syncClientTest(parallelServerClient)
+    syncClientTest(parallelServerClient, repeatTime)
     val time1 = System.currentTimeMillis()
-    asyncClientTest(parallelServerClient)
+    asyncClientTest(parallelServerClient, repeatTime)
     val time2 = System.currentTimeMillis()
-    println(s"On parallel server, syncClient cost ${time1-time0}")
-    println(s"On parallel server, asyncClient cost ${time2-time1}")
+    println(s"On parallel server, syncClient $repeatTime cost ${time1-time0}")
+    println(s"On parallel server, asyncClient $repeatTime cost ${time2-time1}")
+    fileWriter.write(s"On parallel server, syncClient $repeatTime cost ${time1-time0}\n")
+    fileWriter.write(s"On parallel server, asyncClient $repeatTime cost ${time2-time1}\n")
+    fileWriter.flush()
+  }
+
+  @Test
+  def test(): Unit ={
+    val file: File = new File("./record2cores.txt")
+    val fileWriter = new FileWriter(file)
+    val repeatTimeList = List(1, 5, 10, 20, 50, 100, 200, 500)
+    repeatTimeList.foreach(t => {
+      serialServer(t,fileWriter)
+      parallelServer(t,fileWriter)
+    })
+    fileWriter.flush()
+    fileWriter.close()
   }
 
 
 
-  def syncClientTest(_client: FaceFeatureClient): Unit = {
-    val blob: Blob = BlobFactory.fromFile(new File(imgFilePath3))
-    for (i<-1 to 10) {
+  def syncClientTest(_client: FaceFeatureClient, repeatTime: Int): Unit = {
+    val blob: Blob = BlobFactory.fromFile(new File(imgFilePath1))
+    for (i<-1 to repeatTime) {
       _client.getFaceFeatures(blob)
     }
   }
 
-  def asyncClientTest(_client: FaceFeatureClient): Unit ={
-    val blob: Blob = BlobFactory.fromFile(new File(imgFilePath3))
+  def asyncClientTest(_client: FaceFeatureClient, repeatTime: Int): Unit ={
+    val blob: Blob = BlobFactory.fromFile(new File(imgFilePath1))
     val futureResultBuf: ArrayBuffer[Future[List[List[Double]]]] = ArrayBuffer[Future[List[List[Double]]]]()
-    var i = 0
-    for (i<-1 to 10) {
+    for (i<-1 to repeatTime) {
       futureResultBuf.append(_client.asyncGetFaceFeatures(blob))
     }
     val futureResultList = futureResultBuf.toArray
@@ -121,5 +138,4 @@ class FaceFeatureClientTest {
     })
     futureResultList.foreach(f => Await.result(f, Duration.Inf))
   }
-
 }
